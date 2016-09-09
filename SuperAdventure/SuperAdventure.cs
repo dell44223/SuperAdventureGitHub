@@ -29,7 +29,6 @@ namespace SuperAdventure
             lblGold.Text = _player.Gold.ToString();
             lblExperience.Text = _player.ExperiencePoints.ToString();
             lblLevel.Text = _player.Level.ToString();
-            int x = 1;
         }
 
         private void btnNorth_Click(object sender, EventArgs e)
@@ -77,8 +76,26 @@ namespace SuperAdventure
                     }
                 }
 
-                if(!playerHas)
+                if (!playerHasRequiredItem)
+                {
+                    rtbMessages.Text += "You must have a " + newLocation.ItemRequiredToEnter.Name + " to enter this location." + Environment.NewLine;
+                    return;
+                }
             }
+
+            _player.CurrentLocation = newLocation;
+
+            btnNorth.Visible = (newLocation.LocationToNorth != null);
+            btnEast.Visible = (newLocation.LocationToEast != null);
+            btnSouth.Visible = (newLocation.LocationToSouth != null);
+            btnWest.Visible = (newLocation.LocationToWest != null);
+
+            rtbLocation.Text = newLocation.Name + Environment.NewLine;
+            rtbLocation.Text += newLocation.Description + Environment.NewLine;
+
+            _player.CurrentHitPoints = _player.MaximumHitPoints;
+
+            lblHitPoints.Text = _player.CurrentHitPoints.ToString();
         }
     }
 }
