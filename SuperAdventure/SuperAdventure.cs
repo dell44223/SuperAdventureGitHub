@@ -96,6 +96,90 @@ namespace SuperAdventure
             _player.CurrentHitPoints = _player.MaximumHitPoints;
 
             lblHitPoints.Text = _player.CurrentHitPoints.ToString();
+
+            if(newLocation.QuestAvailableHere != null)
+            {
+                bool playerAlreadyHasQuest = false;
+                bool playerAlreadyCompletedQuest = false;
+
+                foreach(PlayerQuest playerQuest in _player.Quests)
+                {
+                    if(playerQuest.Details.ID == newLocation.QuestAvailableHere.ID)
+                    {
+                        playerAlreadyHasQuest = true;
+
+                        if (playerQuest.IsCompleted)
+                        {
+                            playerAlreadyCompletedQuest = true;
+
+                            if (playerQuest.IsCompleted)
+                            {
+                                playerAlreadyCompletedQuest = true;
+                            }
+                        }
+                    }
+
+                    if (playerAlreadyHasQuest)
+                    {
+                        if (!playerAlreadyCompletedQuest)
+                        {
+                            bool playerHasAllItemsToCompleteQuest = true;
+
+                            foreach(QuestCompletionItem qci in newLocation.QuestAvailableHere.QuestCompletionItems)
+                            {
+                                bool foundItemInPlayersInventory = false;
+
+                                foreach(InventoryItem ii in _player.Inventory)
+                                {
+                                    if(ii.Details.ID == qci.Details.ID)
+                                    {
+                                        foundItemInPlayersInventory = true;
+
+                                        if(ii.Quantity < qci.Quantity)
+                                        {
+                                            playerHasAllItemsToCompleteQuest = false;
+
+                                            break;
+                                        }
+
+                                        break;
+                                    }
+                                }
+
+                                if (!foundItemInPlayersInventory)
+                                {
+                                    playerHasAllItemsToCompleteQuest = false;
+
+                                    break;
+                                }
+                            }
+
+                            if (playerHasAllItemsToCompleteQuest)
+                            {
+                                rtbMessages.Text += Environment.NewLine;
+                                rtbMessages.Text += "You complete the " + newLocation.QuestAvailableHere.Name + " quest." + Environment.NewLine;
+
+                                foreach(QuestCompletionItem qci in newLocation.QuestAvailableHere.QuestCompletionItems)
+                                {
+                                    foreach(InventoryItem ii in _player.Inventory)
+                                    {
+                                        if(ii.Details.ID == qci.Details.ID)
+                                        {
+                                            ii.Quantity -= qci.Quantity;
+
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                rtbMessages.Text += "You receive: " + Environment.NewLine;
+                                rtbMessages.Text += newLocation.QuestAvailableHere.RewardExperiencePoints.ToString() + "experience points" + Environment.NewLine;
+                                rtbMessages.Text += newLocation.QuestAvailableHere.RewardGold.ToString() + " gold" + Environment.NewLine;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
